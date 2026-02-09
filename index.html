@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>zeroOS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="https://i.imgur.com/126nI80.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300..800&display=swap');
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", "Open Sans", sans-serif;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #1a1a1a;
+}
+
+/* ===================== DESKTOP ===================== */
+#desktop {
+  width: 100%;
+  height: 100%;
+  background: url("https://glacier.webmc.xyz/windows/wallpaper1.webp") center/cover no-repeat;
+  position: relative;
+
+  display: flex;
+  flex-wrap: wrap;        
+  align-content: flex-start; 
+  gap: 20px;
+
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+
+/* ===================== TASKBAR ===================== */
+#taskbar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  /* used to be 52 px  */
+  background: rgba(20, 20, 20, 0.75);
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+#taskbar-inner {
+  display: flex;
+  gap: 14px;
+}
+
+.cloak-btn {
+  width: 180px;
+  height: 40px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: bold;
+}
+
+.cloak-btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.taskbar-icon {
+  width: 46px;
+  height: 46px;
+  /* used to be 36 */
+  border-radius: 6px;
+  /* background: rgba(255,255,255,0.15); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.taskbar-icon img {
+  /* used to be 26 */
+  width: 34px;
+  height: 34px;
+}
+
+.taskbar-icon:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+/* ===================== START MENU ===================== */
+#start-menu {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  height: 520px;
+  background: rgba(30,30,30,0.85);
+  backdrop-filter: blur(25px);
+  border-radius: 12px;
+  padding: 20px;
+  display: none;
+  color: white;
+  z-index: 90;
+  transition: 0.3s all ease;
+}
+
+/* ===================== WINDOWS ===================== */
+.window {
+  position: absolute;
+  width: 800px;
+  height: 500px;
+  background: #111;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  transform: scale(0.3);
+  opacity: 0;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.window.open {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.window.closing {
+  transform: scale(0.3);
+  opacity: 0;
+}
+
+.title-bar {
+  height: 36px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  color: white;
+}
+
+.maximize-button {
+  margin-left: auto;
+  margin-right: 10px;
+  cursor: pointer;
+  size: 12px;
+}
+
+.maximize-button img {
+    max-width: 50%; 
+    height: 20px;   
+    width: 40px;     
+    display: block; 
+    margin: auto;    
+}
+
+.window-content {
+  width: 100%;
+  height: calc(100% - 36px);
+}
+    
+    .window-content embed {
+  width: 100%;
+  height: calc(100% - 36px);
+}
+
+
+/* ===================== STORE ===================== */
+.store {
+  display: flex;
+  height: 100%;
+  color: white;
+}
+
+/* Sidebar (icons only) */
+.store-sidebar {
+  width: 60px;
+  background: rgba(255,255,255,0.05);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.store-sidebar button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s;
+}
+
+.store-sidebar button:hover,
+.store-sidebar button.active {
+  background: rgba(255,255,255,0.35);
+}
+
+/* Store content area */
+.store-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: scroll;
+}
+
+#store-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 180px);
+  gap: 16px;
+  justify-content: start;
+  align-items: start;
+}
+
+/* Apps/games/devtools from the store 🤓 */
+.store-item {
+  aspect-ratio: 5 / 5;
+  width: 70%;
+  max-width: 220px;
+  height: 140px;
+
+  background: rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 12px;
+}
+
+.store-item:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.store-item img {
+  width: 64px;
+  height: 64px;
+  /* was 48px */
+  margin-bottom: 8px;
+}
+
+/* Pin button (top-right circle) */
+.pin-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(33, 155, 12, 0.98);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pin-button.pinned {
+  background: red;
+}
+
+.pin-button:hover {
+  background: rgba(13, 136, 52, 0.99);
+}
+
+.desktop-icon {
+  width: 72px;          
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+
+.desktop-icon img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.popup-box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px; 
+    position: relative;
+    max-width: 400px;
+    text-align: center; 
+    
+    border: 2px solid #0078D4; /* is ts color tuff at microsoft */
+    box-shadow: 0 0 15px rgba(0, 120, 212, 0.6); 
+}
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333; /* ew its black */
+}
+.checkbox-container {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+ .toggle-label {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 15px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .toggle-input {
+      display: none;
+  }
+  
+  .toggle-slider {
+      width: 40px;
+      height: 20px;
+      background-color: #ccc;
+      border-radius: 15px;
+      position: relative;
+      margin-right: 10px;
+      transition: background-color 0.2s ease;
+  }
+  
+  .toggle-slider::before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      background-color: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      transition: transform 0.2s ease;
+  }
+  
+  .toggle-input:checked + .toggle-slider {
+      background-color: #4196e1;
+  }
+  
+  .toggle-input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+  }
+
+  .appname {
+    align-items: center;
+    text-align: center;
+  }
+
+  </style>
+</head>
+<body oncontextmenu="return false;">
+    <div id="popupOverlay" class="overlay">
+    <div class="popup-box">
+        <button class="close-btn" onclick="closePopup()">×</button>
+        <h1>Welcome to zeroOS!</h1>
+        <p>Hope you enjoy your stay! First things first, this site runs best in 80% zoom mode (press ctrl & - until it zooms out to 80%), and also right click the taskbar on your chromebook and press "Autohide shelf" so you don't have 2 taskbars on screen right above one another. Also, if you're going to use this in class, please about:blank cloak and tab cloak, they're both in the start menu. Thanks!</p>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="dontShow">
+            <label for="dontShow">Do not show me again</label>
+        </div>
+    </div>
+</div>
+
+  <div id="desktop">
+    <!-- TASKBAR -->
+    <div id="taskbar">
+      <div id="taskbar-inner">
+        <!-- Start Menu Button -->
+        <div class="taskbar-icon" onclick="toggleStart()">
+          <img src="https://preview.redd.it/sudz5o3s1vn91.png?width=1080&format=png&auto=webp&s=27107d9d26f3b82ee00f53becd873b7bef881744" alt="Start" />
+        </div>
+        <!-- Browser Button -->
+        <div class="taskbar-icon" onclick="openApp('Browser', 'assets/p.html')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" alt="Edge" />
+        </div>
+        <div class="taskbar-icon" onclick="openApp('Chatroom', 'https://tlk.io/nebulo'); alertCr()">
+          <img src="https://static.vecteezy.com/system/resources/thumbnails/008/508/754/small/3d-chat-mail-message-notification-chatting-illustration-png.png" alt="chatroom">
+        </div>
+        <div class="taskbar-icon" onclick="openApp('Promptpad', 'https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html')">
+          <img src="assets/promptpad.webp" alt="Notepad" />
+        </div>
+        <div class="taskbar-icon" onclick="openApp('Calculator', 'https://desmos.com/scientific')">
+          <img src="assets/calculator.webp">
+        </div>
+        <div class="taskbar-icon" onclick="openApp('Camera', 'assets/camera.html')">
+          <img src="assets/camera.webp">
+        </div>
+        <!-- Store Button -->
+        <div id="taskbar-store-btn" class="taskbar-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Microsoft_Store_Fluent_Design_icon_Windows_11.png" alt="Microsoft Store" />
+        </div>
+      </div>
+    </div>
+
+    <!-- START MENU name is mr fah-->
+    <div id="start-menu">
+      <h3>zeroOS - Start Menu</h3>
+      <br>
+      <div id="about-blank-btn" class="cloak-btn">
+        Open in about:blank
+        <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Microsoft_Store_Fluent_Design_icon_Windows_11.png" alt="Microsoft Store" /> -->
+      </div>
+      <br>
+      <div id="campus-cloak-btn" class="cloak-btn">
+        Infinite Campus Tab Cloak
+      </div>
+      <br>
+       <div>
+    <label class="toggle-label">
+        <input type="checkbox" id="blockTabToggle" class="toggle-input">
+        <span class="toggle-slider"></span>
+        Block tab from being closed
+    </label> 
+    <!-- you happy now noah -->
+</div>
+    </div>
+  </div>
+  <script>
+  // localStorage.clear(); 
+
+
+    document.getElementById('blockTabToggle').addEventListener('change', function () {
+    blockTabEnabled = this.checked;
+});
+
+window.addEventListener('beforeunload', function (event) {
+    if (blockTabEnabled) {
+        event.preventDefault();
+        event.returnValue = 'Are you sure you want to leave?';
+    }
+}); 
+// fuckass welcome modal 🤓
+    window.onload = function() {
+    if (!localStorage.getItem('hideWelcome')) {
+        document.getElementById('popupOverlay').style.display = 'flex';
+    }
+};
+
+function closePopup() {
+    const checkBox = document.getElementById('dontShow');
+    
+    if (checkBox.checked) {
+        localStorage.setItem('hideWelcome', 'true');
+    }
+    
+    document.getElementById('popupOverlay').style.display = 'none';
+}
+
+    
+    const pinnedApps = JSON.parse(localStorage.getItem("zeroos_pinned_apps")) || [];
+
+    function renderPinnedApps() {
+  const desktop = document.getElementById("desktop");
+
+  pinnedApps.forEach(app => {
+    // Prevent duplicates on reload
+    if (document.querySelector(`[data-app="${app.name}"]`)) return;
+
+    const icon = document.createElement("div");
+    icon.className = "desktop-icon";
+    icon.dataset.app = app.name;
+
+    icon.innerHTML = `
+      <img src="${app.image}">
+      <span class="appname">${app.name}</span>
+    `;
+
+    icon.onclick = () => openApp(app.name, app.url);
+    desktop.appendChild(icon);
+  });
+}
+
+        
+/* ============================
+   GLOBAL STATE
+   ============================ */
+
+let z = 10;
+const openWindows = {};
+/* ============================
+   START MENU
+   ============================ */
+
+function toggleStart() {
+  const menu = document.getElementById("start-menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* ============================
+   WINDOW DRAGGING
+   ============================ */
+
+let dragData = null;
+
+document.addEventListener("mousemove", e => {
+  if (!dragData) return;
+
+  dragData.win.style.left = e.clientX - dragData.offsetX + "px";
+  dragData.win.style.top = e.clientY - dragData.offsetY + "px";
+});
+
+document.addEventListener("mouseup", () => {
+  dragData = null;
+});
+
+function makeWindowDraggable(win) {
+  const titleBar = win.querySelector(".title-bar");
+  if (!titleBar) return;
+
+  titleBar.addEventListener("mousedown", e => {
+    // ❌ don't drag if maximized
+    if (win.dataset.maximized === "true") return;
+
+    // ❌ ignore buttons
+    if (e.target.closest(".maximize-button")) return;
+    if (e.target.textContent === "✕") return;
+
+    win.style.zIndex = z++;
+
+    const rect = win.getBoundingClientRect();
+    dragData = {
+      win,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top
+    };
+  });
+}
+
+/* ============================
+   WINDOW MANAGEMENT
+   ============================ */
+
+function openApp(title, url) {
+  if (openWindows[title]) {
+    closeWindow(openWindows[title], title);
+    return;
+  }
+
+  const win = document.createElement("div");
+  win.className = "window";
+  win.dataset.maximized = "false";
+  win.style.top = "100px";
+  win.style.left = "100px";
+  win.style.zIndex = z++;
+
+  win.innerHTML = `
+    <div class="title-bar">
+      <span>${title}</span>
+      <div class="maximize-button" onclick="toggleMaximize('${title}')"><img src="assets/maximize.png"></div>
+      <div style="cursor:pointer" onclick="closeWindow(this.parentElement.parentElement,'${title}')">✕</div>
+    </div>
+    <div class="window-content">
+      <embed src="${url}">
+    </div>
+  `;
+
+  document.getElementById("desktop").appendChild(win);
+  openWindows[title] = win;
+
+  makeWindowDraggable(win);
+
+  win.offsetHeight;
+  win.classList.add("open");
+}
+
+function closeWindow(win, title) {
+  win.classList.remove("open");
+  win.classList.add("closing");
+
+  setTimeout(() => {
+    win.remove();
+    delete openWindows[title];
+  }, 180);
+}
+
+function toggleMaximize(title) {
+  const win = openWindows[title];
+  if (!win) return;
+
+  const maximized = win.dataset.maximized === "true";
+
+  if (maximized) {
+    // restore
+    win.style.top = "100px";
+    win.style.left = "100px";
+    win.style.width = "800px";
+    win.style.height = "500px";
+    win.dataset.maximized = "false";
+  } else {
+    // maximize
+    win.style.top = "0";
+    win.style.left = "0";
+    win.style.width = "100%";
+    win.style.height = "100%";
+    win.dataset.maximized = "true";
+  }
+}
+
+/* ============================
+   MICROSOFT STORE
+   ============================ */
+
+function openStore() {
+  if (openWindows["Store"]) return;
+
+  const win = document.createElement("div");
+  win.className = "window";
+  win.dataset.maximized = "false";
+  win.style.top = "80px";
+  win.style.left = "120px";
+  win.style.zIndex = z++;
+
+  //    <div class="maximize-button" onclick="toggleMaximize('Store')"><img src="assets/maximize.webp"></div>
+
+ win.innerHTML = `
+    <div class="title-bar">
+      <span>Microsoft Store</span>
+      <div class="maximize-button" onclick="toggleMaximize('Store')"><img src="assets/maximize.png"></div>
+      <div style="cursor:pointer" onclick="closeWindow(this.parentElement.parentElement,'Store')">✕</div>
+    </div>
+    <div class="window-content store">
+      <div class="store-sidebar">
+        <button onclick="loadStore('games', this)">
+          <img src="assets/games.png" alt="Games" style="width:20px;">
+        </button>
+        <button onclick="loadStore('apps', this)">
+          <img src="assets/apps.png" alt="Apps" style="width:20px;">
+        </button>
+        <button onclick="loadStore('dev', this)">
+          <img src="assets/devtools.png" alt="Dev" style="width:20px;">
+        </button>
+      </div>
+      <div class="store-content">
+        <div id="store-grid"></div>
+      </div>
+    </div>
+  `;
+
+
+  document.getElementById("desktop").appendChild(win);
+  openWindows["Store"] = win;
+
+  makeWindowDraggable(win);
+  win.classList.add("open");
+
+  loadStore("games");
+}
+
+function loadStore(type, btn) {
+  document.querySelectorAll(".store-sidebar button")
+    .forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+
+  const grid = document.getElementById("store-grid");
+  grid.innerHTML = "";
+
+  const storeApps = {
+    games: [
+      { name: "PolyTrack", url: "https://gaming-escape.github.io/public/assets/games/poly-track/index.html", image: "https://geometrydashlite2.io/data/image/game/polytrack/polytrack.png" },
+      { name: "Duck Life 3", url: "https://selenitebyplayer.artmuseum.org/resources/semag/ducklife3/index.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3em2qQpj_DxFl1HeNIZn8B-8mujTR59SFHQ&s" },
+      { name: "Drive Mad", url: "https://www.swordslasher.com/games/drive-mad/game.html", image: "https://cpsgames.org/thumbs/drive-mad_2.webp" },
+      { name: "Minecraft", url: "https://eaglercraft.com/play", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHDDzMFbYR5tfpoSCpqt_iltsGj5kzFTX5ew&s" },
+      { name: "Crazy Cattle 3D", url: "https://zxsgames.vip/g/crazycattle.html", image: "https://img.itch.zone/aW1nLzIwNzkwNDg0LnBuZw==/315x250%23c/O5flR4.png" },
+      { name: "Geometry Dash Lite", url: "https://script.google.com/a/macros/ogsd.net/s/AKfycbydNb9Y8FIM3D0vcweKtYCYbjJcSXghedO6MN0aWbP5qIwamjjSkBDirvuMHR_6sc4/exec", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBms9b8YIAtSUbezumxG-dUppHEplVXpAlnA&s", },
+      { name: "Crossy Road", url: "https://cantblockthis.neocities.org/", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQR2Yhu6Qcf7NRF_jlPRlkmjIq5KhX0variQ&s", },
+      { name: "Vex 6", url: "https://1kh0.github.io/projects/vex6/index.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWGZ2hTJsSTm1l1ur5lAXSchV4_wpuBKXQTQ&s", },
+      { name: "Slope", url: "https://3kh0.github.io/projects/slope/", image: "https://slopegame-online.com/slope.webp", },
+      { name: "Tetris", url: "https://1kh0.github.io/projects/flashtetris/index.html", image: "https://tetris.com/_next/image?url=https%3A%2F%2Fwww.datocms-assets.com%2F145957%2F1744295598-tetris-firetv-appicon-728x728_728x728.png&w=2048&q=75", },
+      { name: "Worlds Hardest Game", url: "https://1kh0.github.io/projects/worlds-hardest-game/index.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAitjWxCWZeKzNg5wO6HLWJyKg5X34WClFKQ&s", },
+      { name: "Ultrakill", url: "assets/ultrakill.html", image: "https://assets-prd.ignimgs.com/2022/04/08/ultrakill-1649459578320.jpg" },
+      { name: "Stickman and Guns", url: "assets/stickmanguns.html", image: "https://cdn.jsdelivr.net/gh/gn-math/covers@main/578.png" },
+      { name: "FNAW", url: "assets/fnaw.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qF61UgY3rRmT5ejyAOvstSSCpMcExkC5dQ&s" },
+      { name: "COD Zombies", url: "https://nzp.gay", image: "https://i.redd.it/u4ayk0rpjtgb1.jpg" },
+      { name: "More Games...", url: "assets/moregames.html", image: "https://lh3.googleusercontent.com/Mxl8996vzcWWRU5RyKdTDA76GEPj9jQpuYc02nPgtwKgdqpWidM5YVqu8DHBd-D1sZ3sP1AOYB-DlNhMEpaLJxQcTQ=s128-rj-sc0x00ffffff" },
+    ],
+    apps: [
+      { name: "Browser", url: "assets/p.html", image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" },
+      { name: "Virtual Machine", url: "assets/vm.html", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Circle-icons-computer.svg/960px-Circle-icons-computer.svg.png" },
+      { name: "Soundboard", url: "https://myinstants.com", image: "https://play-lh.googleusercontent.com/v_5LsSgLe8lMcmmKc1uYMPkaOkM3JVVkl_IvQ8m9iim5Z8Pw80MgvMyA_zc2QvVs6zA" },
+      { name: "Thirty Dollar Website", url: "https://thirtydollar.website", image: "https://symbl-cdn.com/i/webp/a1/bd21bc0d5c98bb21cbfe3ff871f2aa.webp" },
+      { name: "NautilusOS", url: "assets/nautilusos.html", image: "https://i.imgur.com/fH7uLLZ.png" },
+    ],
+    dev: [
+      { name: "Promptpad", url: "https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html", image: "assets/promptpad.webp" },
+    ]
+  };
+
+  storeApps[type].forEach(app => {
+    const div = document.createElement("div");
+    div.className = "store-item";
+    div.onclick = () => openApp(app.name, app.url);
+
+    div.innerHTML = `
+    <div class="pin-button" onclick="event.stopPropagation(); pinApp('${app.name}', '${app.url}', '${app.image}', this)">🖈</div>
+      <img src="${app.image}">
+      <strong>${app.name}</strong>
+    `;
+
+    grid.appendChild(div);
+  });
+}
+
+/* ============================
+   PINNING
+   ============================ */
+
+function pinApp(name, url, image, btn) {
+  // Prevent duplicates
+  if (pinnedApps.some(app => app.name === name)) return;
+
+  const appData = { name, url, image };
+  pinnedApps.push(appData);
+
+  // Save to localStorage
+  localStorage.setItem("zeroos_pinned_apps", JSON.stringify(pinnedApps));
+
+  // Render immediately
+  renderPinnedApps();
+
+  // Visual feedback on pin button
+  if (btn) {
+    btn.style.background = "rgba(255, 0, 0, 0.8)";
+  }
+}
+
+ function changeTabFavicon(iconUrl) {
+     var link = document.querySelector("link[rel~='icon']");
+     if (!link) {
+     link = document.createElement('link');
+     link.rel = 'icon';
+     document.getElementsByTagName('head')[0].appendChild(link);
+     }
+     link.href = iconUrl;
+     localStorage.setItem("tabIcon", iconUrl);
+     }
+
+     
+     /* ============================
+          START MENU BUTTONS
+   ============================ */
+
+ function AboutBlank() {
+     var win = window.open('');
+     win.document.open();
+     win.document.write(document.documentElement.outerHTML);
+     win.document.title = "about:blank";
+     win.document.close();
+     window.parent.window.location.replace('https://classroom.google.com/')
+     };
+
+
+function tabCloak() {
+     var tabTitle = "Student Profile | Home | Infinite Campus";
+     var tabIcon = "https://oakgroveca.infinitecampus.org/campus/nav-wrapper/assets/icons/favicon-32x32.png";
+     document.title = tabTitle;
+     changeTabFavicon(tabIcon);
+     localStorage.setItem("tabName", tabTitle);
+     localStorage.setItem("tabIcon", tabIcon);
+     };
+
+
+function alertCr() {
+  alert("Warning, this chatroom is NOT owned by me and is not moderated and text is not filtered, so be careful and do not give your information, although images luckily are not sendable");
+};
+
+
+/* ============================
+   EVENT BINDINGS
+   ============================ */
+
+document.getElementById("taskbar-store-btn").addEventListener("click", openStore);
+document.getElementById("about-blank-btn").addEventListener("click", AboutBlank);
+document.getElementById("campus-cloak-btn").addEventListener("click", tabCloak);
+document.getElementById("alert-cr").addEventListener("click", alertCr);
+
+
+
+      
+renderPinnedApps();
+</script>
+
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"94c79d4d951745d085049dd7f2bbd8f8","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>   
