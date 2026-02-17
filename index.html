@@ -352,6 +352,9 @@ html, body {
     font-size: 14px;
     cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;
 }
+.checkbox-container:hover {
+  cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;
+}
 
 #system-tray {
   display: flex;
@@ -360,7 +363,7 @@ html, body {
   min-width: 120px; 
   width: auto;
   justify-content: flex-end;
-  cursor: default;
+  cursor: url(https://i.imgur.com/RKEw5i6.png), default!important;
 }
 
 #clock-container {
@@ -456,8 +459,8 @@ html, body {
 .settings-section:hover {
     background: #555 !important;
     transition: none !important;
-    cursor: pointer;
-}
+    cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;
+  }
 
 .settings-section.active {
     background: #555 !important;
@@ -515,8 +518,7 @@ html, body {
     position: absolute;
     top: 10px;
     right: 10px;
-    cursor: pointer;
-    font-weight: bold;
+    cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;    font-weight: bold;
     color: #888;
 }
 
@@ -560,15 +562,15 @@ html, body {
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Windows_Settings_icon.svg/960px-Windows_Settings_icon.svg.png" alt="settings">
         </div>
         <!-- browser -->
-        <div class="taskbar-icon" onclick="openApp('Browser', 'assets/p.html')">
+        <div class="taskbar-icon" onclick="openApp('Browser', 'https://redtide-stack.github.io/zeroOS-assets/p.html')">
           <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" alt="Edge" />
         </div>
         <!-- chat -->
-         <div class="taskbar-icon" onclick="openApp('Chatroom', 'assets/chat.html')">
+         <div class="taskbar-icon" onclick="openApp('Chatroom', 'https://redtide-stack.github.io/zeroOS-assets/chat.html')">
           <img src="https://static.vecteezy.com/system/resources/thumbnails/008/508/754/small/3d-chat-mail-message-notification-chatting-illustration-png.png" alt="chatroom">
         </div>
         <!-- help me twin -->
-        <div class="taskbar-icon" onclick="openApp('Help', 'assets/help.html')">
+        <div class="taskbar-icon" onclick="openApp('Help', 'https://redtide-stack.github.io/zeroOS-assets/help.html')">
           <img src="https://i.imgur.com/wP962mX.png" alt="Help">
         </div>
         <!-- promptpad totally not stolen from selenite and glacier -->
@@ -580,7 +582,7 @@ html, body {
           <img src="https://i.imgur.com/pwVPAKD.png">
         </div>
         <!-- camara 😢 -->
-        <div class="taskbar-icon" onclick="openApp('Camera', 'assets/camera.html')">
+        <div class="taskbar-icon" onclick="openApp('Camera', 'https://redtide-stack.github.io/zeroOS-assets/camera.html')">
           <img src="https://i.imgur.com/fV1Tu3S.png">
         </div>
         <!-- Megahard store :) -->
@@ -598,22 +600,12 @@ html, body {
 
     <!-- START MENU name is mr fah-->
     <div id="start-menu">
-      <h3>zeroOS - Start Menu</h3>
+      <h3>Pinned Apps</h3>
       <br>
-      <div id="about-blank-btn" class="cloak-btn">
-        Open in about:blank
-        <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Microsoft_Store_Fluent_Design_icon_Windows_11.png" alt="Microsoft Store" /> -->
+      <div onclick="openStore()" class="taskbar-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Microsoft_Store_Fluent_Design_icon_Windows_11.png" alt="Microsoft Store" />
       </div>
-      <br>
-      <div id="campus-cloak-btn" class="cloak-btn">
-        Infinite Campus Tab Cloak
-      </div>
-      <br>
-      <label class="toggle-label">
-        <input type="checkbox" id="blockTabToggle" class="toggle-input">
-        <span class="toggle-slider"></span>
-        Block tab from being closed
-    </label> 
+        <input id="blockTabToggle" style="display: none;"> <!-- I HATE EVENT LISTENERS I CANT GET RID OF THIS SHIT W/OUT BREAKING THE SITE-->
     </div>
   </div>
   <script>
@@ -732,8 +724,10 @@ function makeWindowDraggable(win) {
   if (!titleBar) return;
 
   titleBar.addEventListener("mousedown", e => {
+    // ❌ don't drag if maximized
     if (win.dataset.maximized === "true") return;
 
+    // ❌ ignore buttons
     if (e.target.closest(".maximize-button")) return;
     if (e.target.textContent === "✕") return;
 
@@ -1134,10 +1128,11 @@ function loadStore(type, btn) {
 
   const storeApps = {
     games: [
-      { name: "All Games", url: "assets/moregames.html", image: "https://lh3.googleusercontent.com/Mxl8996vzcWWRU5RyKdTDA76GEPj9jQpuYc02nPgtwKgdqpWidM5YVqu8DHBd-D1sZ3sP1AOYB-DlNhMEpaLJxQcTQ=s128-rj-sc0x00ffffff" },
+      { name: "All Games", url: "https://redtide-stack.github.io/zeroOS-assets/moregames.html", image: "https://lh3.googleusercontent.com/Mxl8996vzcWWRU5RyKdTDA76GEPj9jQpuYc02nPgtwKgdqpWidM5YVqu8DHBd-D1sZ3sP1AOYB-DlNhMEpaLJxQcTQ=s128-rj-sc0x00ffffff" },
       { name: "PolyTrack", url: "https://gaming-escape.github.io/public/assets/games/poly-track/index.html", image: "https://geometrydashlite2.io/data/image/game/polytrack/polytrack.png" },
+      { name: "Roblox Player", url: "https://nowgg.fun/apps/a/19900/b.html", image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Roblox_Logo_2022.jpg" },
       { name: "Duck Life 3", url: "https://selenitebyplayer.artmuseum.org/resources/semag/ducklife3/index.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3em2qQpj_DxFl1HeNIZn8B-8mujTR59SFHQ&s" },
-      { name: "Escape Road", url: "assets/escroad.html", image: "https://escaperoad.io/cache/data/image/game/escape-road-game-sr1-f240x240.webp" },
+      { name: "Escape Road", url: "https://redtide-stack.github.io/zeroOS-assets/escroad.html", image: "https://escaperoad.io/cache/data/image/game/escape-road-game-sr1-f240x240.webp" },
       { name: "Minecraft Launcher", url: "https://eaglercraft.com/play", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHDDzMFbYR5tfpoSCpqt_iltsGj5kzFTX5ew&s" },
       { name: "Crazy Cattle 3D", url: "https://zxsgames.vip/g/crazycattle.html", image: "https://img.itch.zone/aW1nLzIwNzkwNDg0LnBuZw==/315x250%23c/O5flR4.png" },
       { name: "Geometry Dash Lite", url: "https://script.google.com/a/macros/ogsd.net/s/AKfycbydNb9Y8FIM3D0vcweKtYCYbjJcSXghedO6MN0aWbP5qIwamjjSkBDirvuMHR_6sc4/exec", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBms9b8YIAtSUbezumxG-dUppHEplVXpAlnA&s", },
@@ -1146,23 +1141,23 @@ function loadStore(type, btn) {
       { name: "Slope", url: "https://3kh0.github.io/projects/slope/", image: "https://slopegame-online.com/slope.webp", },
       { name: "Tetris", url: "https://1kh0.github.io/projects/flashtetris/index.html", image: "https://tetris.com/_next/image?url=https%3A%2F%2Fwww.datocms-assets.com%2F145957%2F1744295598-tetris-firetv-appicon-728x728_728x728.png&w=2048&q=75", },
       { name: "Worlds Hardest Game", url: "https://1kh0.github.io/projects/worlds-hardest-game/index.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAitjWxCWZeKzNg5wO6HLWJyKg5X34WClFKQ&s", },
-      { name: "Ultrakill", url: "assets/ultrakill.html", image: "https://assets-prd.ignimgs.com/2022/04/08/ultrakill-1649459578320.jpg" },
-      { name: "Stickman and Guns", url: "assets/stickmanguns.html", image: "https://cdn.jsdelivr.net/gh/gn-math/covers@main/578.png" },
-      { name: "FNAW", url: "assets/fnaw.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qF61UgY3rRmT5ejyAOvstSSCpMcExkC5dQ&s" },
+      { name: "Ultrakill", url: "https://redtide-stack.github.io/zeroOS-assets/ultrakill.html", image: "https://assets-prd.ignimgs.com/2022/04/08/ultrakill-1649459578320.jpg" },
+      { name: "Stickman and Guns", url: "https://redtide-stack.github.io/zeroOS-assets/stickmanguns.html", image: "https://cdn.jsdelivr.net/gh/gn-math/covers@main/578.png" },
+      { name: "FNAW", url: "https://redtide-stack.github.io/zeroOS-assets/fnaw.html", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qF61UgY3rRmT5ejyAOvstSSCpMcExkC5dQ&s" },
     ],
     apps: [
-      { name: "Browser", url: "assets/p.html", image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" },
-      { name: "Virtual Machine", url: "assets/vm.html", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Circle-icons-computer.svg/960px-Circle-icons-computer.svg.png" },
+      { name: "Browser", url: "https://redtide-stack.github.io/zeroOS-assets/p.html", image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" },
+      { name: "Virtual Machine", url: "https://redtide-stack.github.io/zeroOS-assets/vm.html", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Circle-icons-computer.svg/960px-Circle-icons-computer.svg.png" },
       { name: "Android Phone", url: "https://appetize.io/embed/xc1w6f1krd589zhp22a0mgftyw?autoplay=false&debug=true&device=pixel4&embed=true&launchUrl=exp%3A%2F%2Fexp.host%2F%40snack%2Fsdk.46.0.0-ghV0%21Qgb8N&scale=65&screenOnly=false&xDocMsg=true&xdocMsg=true&params=%7B&osVersion=11.0&deviceColor=black", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Android_robot.svg/960px-Android_robot.svg.png" },
       { name: "Soundboard", url: "https://myinstants.com", image: "https://play-lh.googleusercontent.com/v_5LsSgLe8lMcmmKc1uYMPkaOkM3JVVkl_IvQ8m9iim5Z8Pw80MgvMyA_zc2QvVs6zA" },
       { name: "Thirty Dollar Website", url: "https://thirtydollar.website", image: "https://symbl-cdn.com/i/webp/a1/bd21bc0d5c98bb21cbfe3ff871f2aa.webp" },
-      { name: "NautilusOS", url: "assets/nautilusos.html", image: "https://i.imgur.com/fH7uLLZ.png" },
+      { name: "NautilusOS", url: "https://redtide-stack.github.io/zeroOS-assets/nautilusos.html", image: "https://i.imgur.com/fH7uLLZ.png" },
       { name: "Windows 96", url: "https://windows96.net/", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaOwEzAfw2sELsugCx71Wo_AwamTI-oJDOlA&s" },
       { name: "Unsafer Chatroom", url: "https://tlk.io/nebulo", image: "https://i.imgur.com/bbbuGgD.png" },
       { name: "Gauth Math", url: "https://gauthmath.com", image: "https://play-lh.googleusercontent.com/1CnI8ztueH5zyg2PLN1qEcPaL_j56Y48gEr2OKcD31ce799Qw91_U0QneDLmwYlCo3w" },
     ],
     dev: [
-      { name: "Promptpad", url: "https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html", image: "assets/promptpad.webp" },
+      { name: "Promptpad", url: "https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html", image: "https://i.imgur.com/bdty4lT.png" },
     ]
   };
 
@@ -1273,8 +1268,6 @@ function tabCloak() {
    ============================ */
 
 document.getElementById("taskbar-store-btn").addEventListener("click", openStore);
-document.getElementById("about-blank-btn").addEventListener("click", AboutBlank);
-document.getElementById("campus-cloak-btn").addEventListener("click", tabCloak);
 
 
       
@@ -1285,6 +1278,6 @@ renderPinnedApps();
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"94c79d4d951745d085049dd7f2bbd8f8","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"94c79d4d951745d085049dd7f2bbd8f8","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>   
-
