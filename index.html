@@ -231,7 +231,7 @@ html, body {
 
 #store-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 180px);
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
   justify-content: start;
   align-items: start;
@@ -533,7 +533,34 @@ html, body {
     padding-top: 10px;
 }
 
+.export-btn {
+  padding: 8px 15px; 
+  color:white; 
+  background: transparent;
+  border:2px solid #444; 
+  border-radius: 5px;
+  cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;
 
+  transition: 0.1s all ease;
+}
+.export-btn:hover {
+  background: #333;
+}
+
+.download-btn{
+  background: transparent;
+  border: 2px solid #0078D4;
+  border-radius: 6px;
+  height: 50px;
+  width: 200px;
+  color: white;
+  transition: 0.15s all ease;
+  cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;
+}
+
+.download-btn:hover {
+  background: #01487f;
+}
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -553,28 +580,36 @@ html, body {
     <div id="taskbar">
       <div style="width: 120px;"></div>
       <div id="taskbar-inner">
-        <!-- Start Menu  -->
+        <!-- start mnu  -->
         <div class="taskbar-icon" onclick="toggleStart()">
-          <img src="https://preview.redd.it/sudz5o3s1vn91.png?width=1080&format=png&auto=webp&s=27107d9d26f3b82ee00f53becd873b7bef881744" alt="Start" />
+          <img src="https://preview.redd.it/sudz5o3s1vn91.png?width=1080&format=png&auto=webp&s=27107d9d26f3b82ee00f53becd873b7bef881744" alt="windows start" />
         </div>
         <!-- setting the set settings ⚙ -->
         <div class="taskbar-icon" onclick="openSettings()">
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Windows_Settings_icon.svg/960px-Windows_Settings_icon.svg.png" alt="settings">
         </div>
-        <!-- browser -->
+        <!-- microsoft edging -->
         <div class="taskbar-icon" onclick="openApp('Browser', 'https://redtide-stack.github.io/zeroOS-assets/p.html')">
           <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" alt="Edge" />
+        </div>
+        <!-- "terminal" -->
+        <div class="taskbar-icon" onclick="openApp('Terminal', 'https://www.terminaltemple.com/')">
+          <img src="https://raw.githubusercontent.com/microsoft/terminal/master/res/terminal.ico" alt="terminal">
         </div>
         <!-- chat -->
          <div class="taskbar-icon" onclick="openApp('Chatroom', 'https://redtide-stack.github.io/zeroOS-assets/chat.html')">
           <img src="https://static.vecteezy.com/system/resources/thumbnails/008/508/754/small/3d-chat-mail-message-notification-chatting-illustration-png.png" alt="chatroom">
         </div>
+        <!-- notepad -->
+        <div class="taskbar-icon" onclick="openApp('Notepad', 'https://justnotepad.com')">
+          <img src="https://blogs.windows.com/wp-content/uploads/prod/sites/44/2021/12/Win-Notepad.png" alt="notepad">
+        </div>
         <!-- help me twin -->
         <div class="taskbar-icon" onclick="openApp('Help', 'https://redtide-stack.github.io/zeroOS-assets/help.html')">
           <img src="https://i.imgur.com/wP962mX.png" alt="Help">
         </div>
-        <!-- promptpad totally not stolen from selenite and glacier -->
-        <div class="taskbar-icon" onclick="openApp('Promptpad', 'https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html')">
+        <!-- syntaxpad totally not stolen from selenite and glacier -->
+        <div class="taskbar-icon" onclick="openApp('Syntaxpad', 'https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html')">
           <img src="https://i.imgur.com/GnJAVTq.png" alt="Notepad" />
         </div>
         <!-- calc -->
@@ -724,10 +759,7 @@ function makeWindowDraggable(win) {
   if (!titleBar) return;
 
   titleBar.addEventListener("mousedown", e => {
-    // ❌ don't drag if maximized
     if (win.dataset.maximized === "true") return;
-
-    // ❌ ignore buttons
     if (e.target.closest(".maximize-button")) return;
     if (e.target.textContent === "✕") return;
 
@@ -820,26 +852,85 @@ function openSettings() {
         return;
     }
 
+    if (!document.getElementById('settings-accent-styles')) {
+        const style = document.createElement('style');
+        style.id = 'settings-accent-styles';
+        style.innerHTML = `
+            .search-wrapper {
+                position: relative;
+                width: 100%;
+                display: flex;
+            }
+            .search-wrapper::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                width: 0;
+                height: 2px;
+                background: #0078D4;
+                transition: width 0.3s ease, left 0.3s ease;
+                pointer-events: none;
+            }
+            .search-wrapper:focus-within::after {
+                width: 100%;
+                left: 0;
+            }
+            .settings-section:hover {
+                background: rgba(255, 255, 255, 0.05) !important;
+            }
+            .settings-section.active {
+                background: rgba(255, 255, 255, 0.08) !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     const win = document.createElement("div");
     win.className = "window";
     win.dataset.maximized = "false";
     win.style.top = "50px";
     win.style.left = "150px";
     win.style.zIndex = z++;
+    win.style.backgroundColor = "#202020"; 
+    win.style.color = "white";
 
     win.innerHTML = `
-        <div class="title-bar">
+        <div class="title-bar" style="background: transparent;">
             <span>Settings</span>
             <div class="maximize-button" onclick="toggleMaximize('Settings')"><img src="https://i.imgur.com/iigug37.png"></div>
             <div style="cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;" onclick="closeWindow(this.parentElement.parentElement,'Settings')">✕</div>
         </div>
-        <div class="window-content store">
-            <div class="store-sidebar" style="width: 180px; align-items: flex-start; padding: 15px;">
-                <button class="settings-section" onclick="loadSettings('personalization', this)" style="width:100%; text-align:left; font-size:13px; margin-bottom:5px; padding-left: 10px; border-radius: 7px; background: transparent;"><img src="https://i.imgur.com/BWqzkjw.png" style="width: 15px; height: 15px;"> Personalization</button>
-                <button class="settings-section" onclick="loadSettings('cloaking', this)" style="width:100%; text-align:left; font-size:13px; margin-bottom:5px; padding-left: 10px; display: flex; align-items: center; border-radius: 7px; background: transparent;"><img src="https://i.imgur.com/RV5FuEQ.png" style="width: 25px; height: 25px; margin-right: 10px;">Cloaking</button>
-                <button class="settings-section" onclick="loadSettings('system', this)" style="width:100%; text-align:left; font-size:13px; margin-bottom:5px; padding-left: 10px; display: flex; align-items: center; border-radius: 7px; background: transparent;"><img src="https://i.imgur.com/G8vPg73.png" style="width: 15px; height: 15px; margin-right: 7px;">     System</button>
+        <div class="window-content" style="display: flex; height: calc(100% - 30px); overflow: hidden;">
+            <div class="store-sidebar" style="width: 260px; background: rgba(255,255,255,0.03); padding: 15px; display: flex; flex-direction: column; align-items: flex-start; border-right: 1px solid rgba(255,255,255,0.05);">
+                
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px; width: 100%; padding-left: 5px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541" style="width: 45px; height: 45px; border-radius: 50%;">
+                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                        <span style="font-size: 14px; font-weight: 600; line-height: 1.2;">Zero User</span>
+                        <span style="font-size: 12px; color: #aaa; line-height: 1.2;">Local Account</span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 5px; width: 100%; padding-right: 10px;">
+                    <div class="search-wrapper">
+                        <input type="text" placeholder="Find a setting" 
+                               style="width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid #757575; border-radius: 4px; padding: 7px 10px; color: #ccc; font-size: 13px; outline: none;">
+                    </div>
+                </div>
+
+                <button class="settings-section" onclick="loadSettings('personalization', this)" style="width:100%; text-align:left; font-size:13px; margin-bottom:4px; padding: 8px 10px; border-radius: 5px; background: transparent; display: flex; align-items: center; gap: 12px; border: none; color: white; cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;">
+                    <img src="https://i.imgur.com/BWqzkjw.png" style="width: 16px; height: 16px;"> Personalization
+                </button>
+                <button class="settings-section" onclick="loadSettings('cloaking', this)" style="width:100%; text-align:left; font-size:13px; margin-bottom:4px; padding: 8px 10px; border-radius: 5px; background: transparent; display: flex; align-items: center; gap: 12px; border: none; color: white; cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;">
+                    <img src="https://i.imgur.com/RV5FuEQ.png" style="width: 16px; height: 16px;"> Cloaking
+                </button>
+                <button class="settings-section" onclick="loadSettings('system', this)" style="width:100%; text-align:left; font-size:13px; margin-bottom:4px; padding: 8px 10px; border-radius: 5px; background: transparent; display: flex; align-items: center; gap: 12px; border: none; color: white; cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;">
+                    <img src="https://i.imgur.com/G8vPg73.png" style="width: 16px; height: 16px;"> System
+                </button>
             </div>
-            <div class="store-content" id="settings-content" style="padding:20px;"></div>
+
+            <div class="store-content" id="settings-content" style="flex: 1; padding: 30px; overflow-y: auto; background: transparent;"></div>
         </div>
     `;
 
@@ -847,9 +938,9 @@ function openSettings() {
     openWindows["Settings"] = win;
     makeWindowDraggable(win);
     win.classList.add("open");
-    loadSettings('personalization', win.querySelector('.store-sidebar button'));
+    
+    loadSettings('personalization', win.querySelector('.settings-section'));
 }
-
 
 function loadSettings(type, btn) {
     const content = document.getElementById("settings-content");
@@ -967,16 +1058,27 @@ function loadSettings(type, btn) {
 
     else if (type === 'system') {
         content.innerHTML = `
-            <h2 style="color:white;">System   <ion-icon name="laptop-outline"></ion-icon></h2><br>
+            <h2 style="color:white;">System   <ion-icon name="laptop-outline" style="margin-left: 5px;"></ion-icon></h2><br>
             <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px;">
                 <p style="color:white;"><strong>OS Name:</strong> zeroOS</p>
                 <p style="color:gray; font-size:13px;">Build: 1.0.8-beta</p>
                 <p style="color:gray; font-size:13px;">Status: Operational</p>
             </div>
             <br>
-            <button onclick="if(confirm('Reset all settings and pinned apps?')){localStorage.clear(); location.reload();}" 
+            <button onclick="if(confirm('Reset all settings, pinned apps and localstorage data?')){localStorage.clear(); location.reload();}" 
                     class="factory-btn">
                 Factory Reset zeroOS
+            </button>
+            <hr style="border:0; border-top:1px solid #444; margin:20px 0;">
+            <h3 style="color: white;">Export and import saved data</h3>
+            <br>
+            <div style="display:flex; gap:10px;">
+              <button onclick="exportData()" class="export-btn">Export Backup</button>
+              <button onclick="importData()" class="export-btn">Import Backup</button>
+            </div>
+            <hr style="border:0; border-top:1px solid #444; margin:20px 0;">
+            <button id="dlBtn" class="download-btn" onclick="OfflineDownload()">
+              Download ZeroOS Offline
             </button>
         `;
     }
@@ -1088,7 +1190,7 @@ function openStore() {
       <div class="maximize-button" onclick="toggleMaximize('Store')"><img src="https://i.imgur.com/iigug37.png"></div>
       <div style="cursor: url(https://i.imgur.com/IHgioev.png), pointer!important;" onclick="closeWindow(this.parentElement.parentElement,'Store')">✕</div>
     </div>
-    <div class="window-content store">
+    <div class="window-content store" style="display: flex; height: calc(100% - 30px); overflow: hidden;">
       <div class="store-sidebar">
         <button onclick="loadStore('games', this)">
           <img src="https://i.imgur.com/NYN9NZt.png" alt="Games" style="width:20px;">
@@ -1096,12 +1198,13 @@ function openStore() {
         <button onclick="loadStore('apps', this)">
           <img src="https://i.imgur.com/nS51nGU.png" alt="Apps" style="width:20px;">
         </button>
-        <button onclick="loadStore('dev', this)">
-          <img src="https://i.imgur.com/XYZdDUP.png" alt="Dev" style="width:20px;">
+        <button onclick="loadStore('devtools', this)">
+          <img src="https://i.imgur.com/XYZdDUP.png" alt="Devtools" style="width:20px;">
         </button>
       </div>
-      <div class="store-content">
-        <div id="store-grid"></div>
+      <div class="store-content" style="flex: 1; padding: 20px; overflow-y: auto; height: calc(100% - 20px);">
+          <h2 id="store-category-title" style="margin-bottom: 20px; color: white;">Games</h2>
+          <div id="store-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;"></div>
       </div>
     </div>
   `;
@@ -1122,6 +1225,9 @@ function loadStore(type, btn) {
   document.querySelectorAll(".store-sidebar button")
     .forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
+
+   const titleElem = document.getElementById("store-category-title");
+  if (titleElem) titleElem.innerText = type.charAt(0).toUpperCase() + type.slice(1);
 
   const grid = document.getElementById("store-grid");
   grid.innerHTML = "";
@@ -1156,8 +1262,11 @@ function loadStore(type, btn) {
       { name: "Unsafer Chatroom", url: "https://tlk.io/nebulo", image: "https://i.imgur.com/bbbuGgD.png" },
       { name: "Gauth Math", url: "https://gauthmath.com", image: "https://play-lh.googleusercontent.com/1CnI8ztueH5zyg2PLN1qEcPaL_j56Y48gEr2OKcD31ce799Qw91_U0QneDLmwYlCo3w" },
     ],
-    dev: [
-      { name: "Promptpad", url: "https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html", image: "https://i.imgur.com/bdty4lT.png" },
+    devtools: [
+      { name: "Syntaxpad", url: "https://selenitebyplayer.artmuseum.org/resources/sppa/code/index.html", image: "https://i.imgur.com/bdty4lT.png" },
+      { name: "Color Picker", url: "https://pickcoloronline.com/", image: "https://cdn-icons-png.freepik.com/256/4436/4436882.png?semt=ais_white_label" },
+      { name: "JSON Formatter", url: "https://jsonformatter.org", image: "https://uxwing.com/wp-content/themes/uxwing/download/file-and-folder-type/file-json-color-green-icon.png" },
+      { name: "JS Obfuscator", url: "https://js-obfuscator.github.io/", image: "https://i.imgur.com/9bMcQ0N.png" }, // plz vro i swer im not e skid
     ]
   };
 
@@ -1272,6 +1381,80 @@ document.getElementById("taskbar-store-btn").addEventListener("click", openStore
 
       
 renderPinnedApps();
+
+async function OfflineDownload() {
+    const btn = document.getElementById('dlBtn');
+    const url = 'https://raw.githubusercontent.com/redtide-stack/zeroOS/refs/heads/main/index.html';
+    
+    btn.disabled = true;
+    btn.innerText = 'Fetching...';
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network error');
+        
+        const blob = await response.blob();
+
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'ZeroOS Offline.html'; 
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+
+        btn.innerText = 'Download completed, open file from your recent downloads folder';
+    } catch (error) {
+        console.error('Download failed:', error);
+        btn.innerText = 'Error Downloading';
+    } finally {
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerText = 'Download ZeroOS Offline';
+        }, 3000);
+    }
+}
+
+function exportData() {
+    const data = JSON.stringify(localStorage);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    
+    a.style.display = "none";
+    a.href = url;
+    a.download = "zeroOS_backup.json";
+    
+    document.body.appendChild(a);
+    a.click();
+    
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+function importData() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = event => {
+            try {
+                const data = JSON.parse(event.target.result);
+                localStorage.clear();
+                Object.keys(data).forEach(key => localStorage.setItem(key, data[key]));
+                alert("Import successful, reloading the site");
+                location.reload();
+            } catch (err) { alert("Invalid backup file."); }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
 </script>
 
 
